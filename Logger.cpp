@@ -1,3 +1,11 @@
+/*
+ * Logger.cpp
+ *
+ * Created by Silver Ore Team, 2025
+ * Original source: https://github.com/Silver-Ore-Team/zMultilogue/blob/main/src/NH/Logger.cpp
+ * 
+ */
+
 #include "Logger.h"
 #include <ZenGin/zGothicAPI.h>
 #include <utility>

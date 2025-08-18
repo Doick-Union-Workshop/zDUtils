@@ -1,3 +1,11 @@
+/*
+ * Logger.h
+ *
+ * Created by Silver Ore Team, 2025
+ * Original source: https://github.com/Silver-Ore-Team/zMultilogue/blob/main/src/NH/Logger.h
+ *
+ */
+
 #pragma once
 
 #include "Commons.h"
