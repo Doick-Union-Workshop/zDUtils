@@ -16,7 +16,6 @@ namespace Utils
     {
         String values[] = { "NONE", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
         size_t count = sizeof(values) / sizeof(String);
-
         for (size_t i = 0; i < count; i++)
         {
             if (level.MakeUpper() == values[i])
@@ -24,7 +23,6 @@ namespace Utils
                 return (LoggerLevel)i;
             }
         }
-
         return LoggerLevel::None;
     }
 
@@ -33,11 +31,9 @@ namespace Utils
         if (level == LoggerLevel::None) return;
 
         size_t count = m_Adapters.GetCount();
-
         for (size_t i = 0; i < count; i++)
         {
             ILoggerAdapter* adapter = m_Adapters[i];
-
             if (adapter->CanLog(level))
             {
                 adapter->Message(level, m_LoggerName, message);
@@ -48,7 +44,6 @@ namespace Utils
     void Logger::PrintRaw(LoggerLevel level, const String& message) const
     {
         auto* adapter = GetAdapter<UnionConsoleLoggerAdapter>();
-
         if ((adapter && adapter->CanLog(level)) || !adapter)
         {
             String::Format("\x1B[0m\x1B[36;3m{0}\x1B[0m", message).StdPrintLine();
@@ -75,10 +70,10 @@ namespace Utils
         Color color = m_ColorTable[(size_t)level];
 
         String::Format("\x1B[0m{0} {1} \x1B[0m {2}[{3}]\x1B[0m {4}{5}\x1B[0m",
-                       color.Level, LoggerLevelToDisplayString(level),
-                       color.Channel, channel,
-                       color.Message, message)
-                .StdPrintLine();
+            color.Level, LoggerLevelToDisplayString(level),
+            color.Channel, channel,
+            color.Message, message)
+            .StdPrintLine();
     }
 
     void ZSpyLoggerAdapter::Message(LoggerLevel level, const String& channel, const String& message)
@@ -87,12 +82,26 @@ namespace Utils
 
         switch (GetGameVersion())
         {
-            case Engine_G1:
-                Gothic_I_Classic::zerr->Message(Gothic_I_Classic::zSTRING(formattedMessage.ToChar()));
-                break;
-            case Engine_G2A:
-                Gothic_II_Addon::zerr->Message(Gothic_II_Addon::zSTRING(formattedMessage.ToChar()));
-                break;
+#ifdef __G1
+        case Engine_G1:
+            Gothic_I_Classic::zerr->Message(Gothic_I_Classic::zSTRING(formattedMessage.ToChar()));
+            break;
+#endif
+#ifdef __G1A
+        case Engine_G1A:
+            Gothic_I_Addon::zerr->Message(Gothic_I_Addon::zSTRING(formattedMessage.ToChar()));
+            break;
+#endif
+#ifdef __G2
+        case Engine_G2:
+            Gothic_II_Classic::zerr->Message(Gothic_II_Classic::zSTRING(formattedMessage.ToChar()));
+            break;
+#endif
+#ifdef __G2A
+        case Engine_G2A:
+            Gothic_II_Addon::zerr->Message(Gothic_II_Addon::zSTRING(formattedMessage.ToChar()));
+            break;
+#endif
         }
     }
 
@@ -113,10 +122,9 @@ namespace Utils
         }
 
         auto* logger = new Utils::Logger(name, {
-                new Utils::UnionConsoleLoggerAdapter(UnionConsoleLoggerAdapter::DEFAULT_LEVEL),
-                new Utils::ZSpyLoggerAdapter(ZSpyLoggerAdapter::DEFAULT_LEVEL, "B")
+            new Utils::UnionConsoleLoggerAdapter(UnionConsoleLoggerAdapter::DEFAULT_LEVEL),
+            new Utils::ZSpyLoggerAdapter(ZSpyLoggerAdapter::DEFAULT_LEVEL, "B")
         });
-
         m_Loggers.Insert(logger);
         return logger;
     }
